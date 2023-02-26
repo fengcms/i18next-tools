@@ -50,8 +50,8 @@ const privateTypes = {
 */
 module.exports = {
   Dicts: {
+    pid: privateTypes.Hits(),
     key: STRING,
-    channel_id: INTEGER, // 归属栏目ID
     en: TEXT,
     zh: TEXT,
     ja: TEXT,
@@ -59,13 +59,8 @@ module.exports = {
     ko: TEXT,
     es: TEXT,
     tr: TEXT,
-    time: privateTypes.Date()
-  },
-  // 文章栏目
-  Channel: {
-    pid: INTEGER, // 归属父ID
-    name: STRING, // 栏目名称
-    sort: privateTypes.Sort(), // 栏目排序
+    mark: TEXT,
+    node: privateTypes.Hits(),
     time: privateTypes.Date()
   },
   // 超级管理员

@@ -18,6 +18,7 @@ module.exports = async (ctx, { params, method, token }, next) => {
     if (!userInfo) ctx.throw(500, '账户数据存在异常')
     // 删除密码信息并返回其他信息
     delete userInfo.password
+    delete userInfo.salt
     userInfo.role = role
     ctx.body = succ(userInfo)
   }

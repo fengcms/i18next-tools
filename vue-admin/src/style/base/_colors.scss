@@ -1,0 +1,35 @@
+$bg: #1C1C28;
+$dark1: #303044;
+$dark2: #232334;
+$dark3: #171722;
+$dark4: #12121A;
+$line: #2D2D3D;
+
+$text1: #F7F7F7;
+$text2: #C3C2D4;
+$text3: #6F6E84;
+$text4: #EEAC48;
+
+$blue: #2A85FF;
+$green: #36C78A;
+$red: #F46778;
+$purple: #8E59FF;
+$yellow: #EEAC48;
+$cyan: #88FFF8;
+
+$l-blue: #B1E5FC;
+$l-green: #B5E4CA;
+$l-orange: #FFBC99;
+$l-purple: #CABDFF;
+$l-yellow: #FFD88D;
+
+
+.rise {
+  color: $green;
+}
+.fall {
+  color: $red;
+}
+.warn {
+  color: $yellow;
+}
