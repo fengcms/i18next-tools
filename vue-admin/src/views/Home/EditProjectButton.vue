@@ -1,9 +1,9 @@
 <template>
-  <el-button type="primary" @click="dialogVisible = true"> 添加项目 </el-button>
+  <el-button type="primary" @click="dialogVisible = true"> 编辑 </el-button>
 
   <el-dialog
     v-model="dialogVisible"
-    title="添加项目"
+    title="编辑项目"
     width="500px"
     :before-close="onClose"
     append-to-body
@@ -23,12 +23,15 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { addDict } from '@/api/dicts'
+import { editDict, getDict } from '@/api/dicts'
+// import type { DictsItemProps } from '@/api/dicts'
 const props = defineProps<{
+  id: string | number
   getData: () => void
 }>()
+
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
   key: '',
@@ -36,12 +39,26 @@ const ruleForm = reactive({
   pid: 0,
   node: 1
 })
+const dialogVisible = ref(false)
+
+watch(
+  () => dialogVisible.value,
+  async (show) => {
+    console.log(props.id)
+    if (show) {
+      const { key, mark, pid, node } = await getDict(props.id)
+      ruleForm.key = key
+      ruleForm.mark = mark ?? ''
+      ruleForm.pid = pid
+      ruleForm.node = node
+    }
+  }
+)
 
 const rules = reactive<FormRules>({
   key: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
   mark: [{ required: true, message: '请输入项目备注', trigger: 'blur' }]
 })
-const dialogVisible = ref(false)
 
 const onClose = () => {
   if (!ruleFormRef.value) return
@@ -53,11 +70,10 @@ const onSubmit = async () => {
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate(async (valid) => {
     if (valid) {
-      await addDict(ruleForm)
+      await editDict(props.id, ruleForm)
       await props.getData()
       onClose()
     }
   })
-  // onClose()
 }
 </script>
