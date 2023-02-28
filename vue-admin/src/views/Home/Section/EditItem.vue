@@ -37,7 +37,7 @@
     </li>
     <li>
       <el-button type="primary" size="small" @click="onSubmit()">保存</el-button>
-      <el-button type="danger" size="small" @click="deleteItem()">删除</el-button>
+      <el-button type="danger" size="small" :icon="Delete" @click="deleteItem()"></el-button>
     </li>
     <li>
       <time>{{ timeFormat(dict.time, 'MM-DD HH:mm:ss') }}</time>
@@ -46,9 +46,8 @@
 </template>
 <script setup lang="ts" name="DictItem">
 import { onMounted, ref, watch, computed } from 'vue'
-import { remove } from 'lodash'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Document } from '@element-plus/icons-vue'
+import { Delete } from '@element-plus/icons-vue'
 import { editDict, deleteDict } from '@/api/dicts'
 import type { DictsSectionItemProps } from '@/api/dicts'
 import { timeFormat } from '@/utils/tools'

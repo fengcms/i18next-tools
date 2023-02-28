@@ -48,18 +48,15 @@
   </el-dialog>
 
   <div class="web-dict-item-bar">
-    <el-button size="small" type="success" @click="showAddNode = true"
-      >添加 {{ props.itemData?.label || props.itemData?.key }} 子节点</el-button
-    >
-    <el-button size="small" type="success" @click="showAddItem = true"
-      >添加 {{ props.itemData?.label || props.itemData?.key }} 子翻译条目</el-button
-    >
+    <el-button size="small" type="success" @click="showAddNode = true">Add 子节点</el-button>
+    <el-button size="small" type="success" @click="showAddItem = true">Add 子条目</el-button>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { addDict } from '@/api/dicts'
 import type { DictsSectionItemProps } from '@/api/dicts'
+import { Plus } from '@element-plus/icons-vue'
 const props = defineProps<{
   itemData: DictsSectionItemProps
   getData: () => void
