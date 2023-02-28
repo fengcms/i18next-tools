@@ -14,6 +14,15 @@ const router = createRouter({
           path: 'main',
           name: 'main',
           component: () => import('@/views/Home/index.vue')
+        },
+        {
+          path: 'project/:pid',
+          name: 'project',
+          component: () => import('@/views/Home/Project/index.vue') },
+        {
+          path: 'project/:pid/section/:sid',
+          name: 'projectSection',
+          component: () => import('@/views/Home/Section/index.vue')
         }
       ]
     },

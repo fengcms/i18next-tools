@@ -1,18 +1,18 @@
 <template>
-  <el-button type="success" @click="dialogVisible = true"> 编辑 </el-button>
+  <el-button type="primary" @click="dialogVisible = true"> 添加项目段落 </el-button>
 
   <el-dialog
     v-model="dialogVisible"
-    title="编辑项目"
+    title="添加项目段落"
     width="500px"
     :before-close="onClose"
     append-to-body
   >
     <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules">
-      <el-form-item label="项目名称" prop="key">
+      <el-form-item label="项目段落名称" prop="key">
         <el-input v-model="ruleForm.key" />
       </el-form-item>
-      <el-form-item label="项目备注" prop="mark">
+      <el-form-item label="项目段落备注" prop="mark">
         <el-input v-model="ruleForm.mark" type="textarea" />
       </el-form-item>
     </el-form>
@@ -23,42 +23,26 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue'
+import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { editDict, getDict } from '@/api/dicts'
-// import type { DictsItemProps } from '@/api/dicts'
+import { addDict } from '@/api/dicts'
 const props = defineProps<{
-  id: string | number
   getData: () => void
+  pid: string | number
 }>()
-
 const ruleFormRef = ref<FormInstance>()
 const ruleForm = reactive({
   key: '',
   mark: '',
-  pid: 0,
+  pid: props.pid,
   node: 1
 })
-const dialogVisible = ref(false)
-
-watch(
-  () => dialogVisible.value,
-  async (show) => {
-    console.log(props.id)
-    if (show) {
-      const { key, mark, pid, node } = await getDict(props.id)
-      ruleForm.key = key
-      ruleForm.mark = mark ?? ''
-      ruleForm.pid = pid
-      ruleForm.node = node
-    }
-  }
-)
 
 const rules = reactive<FormRules>({
-  key: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
-  mark: [{ required: true, message: '请输入项目备注', trigger: 'blur' }]
+  key: [{ required: true, message: '请输入项目段落名称', trigger: 'blur' }],
+  mark: [{ required: true, message: '请输入项目段落备注', trigger: 'blur' }]
 })
+const dialogVisible = ref(false)
 
 const onClose = () => {
   if (!ruleFormRef.value) return
@@ -70,10 +54,11 @@ const onSubmit = async () => {
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate(async (valid) => {
     if (valid) {
-      await editDict(props.id, ruleForm)
+      await addDict(ruleForm)
       await props.getData()
       onClose()
     }
   })
+  // onClose()
 }
 </script>

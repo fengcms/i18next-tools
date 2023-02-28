@@ -1,11 +1,16 @@
-import JSEncrypt from 'jsencrypt/bin/jsencrypt.min.js'
+import JSEncrypt from 'jsencrypt'
+import dayjs from 'dayjs'
 
 // 精确校验数据格式方法
-export const toType = obj => {
-  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+export const toType = (obj: any): string => {
+  // @ts-ignore
+  return {}.toString
+    .call(obj)
+    .match(/\s([a-zA-Z]+)/)[1]
+    .toLowerCase()
 }
 // 滤空方法
-export const filterNull = o => {
+export const filterNull = (o: any): any => {
   for (const key in o) {
     if (o[key] == null) delete o[key]
     if (toType(o[key]) === 'string') {
@@ -18,11 +23,16 @@ export const filterNull = o => {
       // console.log(o[key])
       o[key] = filterNull(o[key])
       // console.log(o[key])
-      o[key] = o[key].filter(arr => arr)
+      o[key] = o[key].filter((arr: any) => arr)
       if (o[key].length === 0) delete o[key]
     }
   }
   return o
+}
+
+export const timeFormat = (time: string | number | Date, template?: string) => {
+  console.log(time)
+  return dayjs(time).format(template ?? 'YYYY-MM-DD HH:mm:ss')
 }
 /*
   多选框 全选 反选 不选 工具方法，支持单层和双层数据处理
@@ -35,20 +45,25 @@ export const filterNull = o => {
   allItems: Array      全部可选择的多选框数据值数组
   classItems: Array or null 仅需要处理的一组可选多选框数据值
 */
-export const checkBoxTool = (type, checkedItems, allItems, classItems) => {
-  let classChecked = []
+export const checkBoxTool = (
+  type: string,
+  checkedItems: any[],
+  allItems: any[],
+  classItems: any[]
+) => {
+  let classChecked: any[] = []
   if (classItems) {
     // 组内选择功能
     // 计算当前项中已经选择的数据
-    classItems.forEach(i => {
+    classItems.forEach((i) => {
       checkedItems.includes(i) && classChecked.push(i)
     })
     // 在全部选择的数据中剔除当前组已选择的数据
-    classChecked.forEach(i => {
-      checkedItems.includes(i) && (delete checkedItems[checkedItems.indexOf(i)])
+    classChecked.forEach((i) => {
+      checkedItems.includes(i) && delete checkedItems[checkedItems.indexOf(i)]
     })
     // 删除数据后，需要给已选择数据过滤空
-    checkedItems = checkedItems.filter(i => i)
+    checkedItems = checkedItems.filter((i) => i)
   } else {
     // 全部数据功能处理
     classItems = allItems
@@ -56,7 +71,7 @@ export const checkBoxTool = (type, checkedItems, allItems, classItems) => {
     checkedItems = []
   }
   // 分别处理计算结果
-  let res = []
+  let res: any[] = []
   const actions = {
     all: () => {
       res = [...classItems]
@@ -65,9 +80,10 @@ export const checkBoxTool = (type, checkedItems, allItems, classItems) => {
       res = []
     },
     reverse: () => {
-      classItems.forEach(i => !classChecked.includes(i) && res.push(i))
+      classItems.forEach((i) => !classChecked.includes(i) && res.push(i))
     }
   }
+  // @ts-ignore
   actions[type]()
   return [...checkedItems, ...res]
 }
@@ -83,14 +99,21 @@ export const checkBoxTool = (type, checkedItems, allItems, classItems) => {
     moreLevel     最高递归层级， 默认为 99 层
   }
 */
-export const makeElementTree = (params) => {
+export const makeElementTree = (params: {
+  pid: number
+  list: any[]
+  pidFiled: string
+  labelFiled: string
+  valueFiled: string
+  moreLevel: number
+}) => {
   const { pid, list, pidFiled, labelFiled, valueFiled, moreLevel = 99 } = params
-  const makeTree = (pid, arr, level) => {
-    const res = []
-    arr.forEach(i => {
+  const makeTree = (pid: number, arr: any[], level: number) => {
+    const res: any[] = []
+    arr.forEach((i) => {
       if (i[pidFiled] === pid) {
         const rep = level < moreLevel ? makeTree(i[valueFiled], list, level + 1) : []
-        const obj = {
+        const obj: { label: any; value: any; children?: any } = {
           label: i[labelFiled],
           value: i[valueFiled]
         }
@@ -104,37 +127,52 @@ export const makeElementTree = (params) => {
 }
 
 // 如果是数据类型的值，则返回数字，否则返回原值
-export const calcNumberString = str => {
-  return str === '' ? '' : isNaN(str) ? str : +str
+export const calcNumberString = (str: any) => {
+  return str === '' ? '' : isNaN(Number(str)) ? str : +str
 }
 
 // 富文本格式化函数
-export const HTMLDecode = (text) => {
-  var arrEntities = { lt: '<', gt: '>', nbsp: ' ', amp: '&', quot: '"' }
-  text = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t] })
-  text = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t] })
-  return text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t] })
+export const HTMLDecode = (text: string) => {
+  const arrEntities = { lt: '<', gt: '>', nbsp: ' ', amp: '&', quot: '"' }
+  text = text.replace(/&(lt|gt|nbsp|amp|quot);/gi, (all, t: string) => {
+    // @ts-ignore
+    return arrEntities[t]
+  })
+  text = text.replace(/&(lt|gt|nbsp|amp|quot);/gi, (all, t: string) => {
+    // @ts-ignore
+    return arrEntities[t]
+  })
+  return text.replace(/&(lt|gt|nbsp|amp|quot);/gi, (all, t: string) => {
+    // @ts-ignore
+    return arrEntities[t]
+  })
 }
 // JSON 数据转 Url search 参数字符串
-export const obj2Url = obj => {
+export const obj2Url = (obj:Record<string, string>) => {
   obj = filterNull(obj)
-  return Object.keys(obj).map(i => `${i}=${obj[i]}`).join('&')
+  return Object.keys(obj)
+    .map((i) => `${i}=${obj[i]}`)
+    .join('&')
 }
 // Url search 参数字符串 转 JSON 数据
 export const url2Obj = (url = '') => {
   const obj = {}
-  url.slice(url.indexOf('?') + 1).split('&').forEach(i => {
-    const temp = i.split('=')
-    obj[temp[0]] = temp[1]
-  })
+  url
+    .slice(url.indexOf('?') + 1)
+    .split('&')
+    .forEach((i) => {
+      const temp = i.split('=')
+      // @ts-ignore
+      obj[temp[0]] = temp[1]
+    })
   return filterNull(obj)
 }
-export const rsaEn = (str, key) => {
+export const rsaEn = (str: string, key: string) => {
   try {
     const JSE = new JSEncrypt()
     JSE.setPublicKey(key)
     return JSE.encrypt(str)
-  } catch (e) {
+  } catch (e: any) {
     return new Error(e)
   }
 }

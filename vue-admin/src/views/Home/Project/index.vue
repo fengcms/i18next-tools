@@ -1,17 +1,22 @@
 <template>
-  <PageHeader home>
-     <AddProjectButton :getData="getData" />
+  <PageHeader :pid="pid" :mark="project?.mark" :p-key="project?.key">
+    <AddSectionButton :getData="getData" :pid="pid" />
   </PageHeader>
   <div class="web-project-list">
     <el-table :data="list" style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="key" label="项目名称" width="120" />
       <el-table-column prop="mark" label="项目备注" />
-      <el-table-column prop="time" label="Time" :formatter="timeFormat" width="200" />
+      <el-table-column
+        prop="time"
+        label="Time"
+        :formatter="(row) => timeFormat(row.time)"
+        width="200"
+      />
       <el-table-column fixed="right" label="Operations" width="300">
         <template #default="scope">
-          <el-button type="primary" @click="$router.push(`/project/${scope.row.id}`)">详情</el-button>
-          <EditProjectButton :id="scope.row.id" :getData="getData" />
+          <el-button type="primary" @click="$router.push(`/project/${scope.row.pid}/section/${scope.row.id}`)">详情</el-button>
+          <EditSectionButton :id="scope.row.id" :getData="getData" />
           <el-button @click="deleteItem(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -20,27 +25,30 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { getDicts, deleteDict } from '@/api/dicts'
-import dayjs from 'dayjs'
+import { getDicts, deleteDict, getDict } from '@/api/dicts'
 import type { DictsItemProps } from '@/api/dicts'
-import AddProjectButton from './AddProjectButton.vue'
-import EditProjectButton from './EditProjectButton.vue'
+import { timeFormat } from '@/utils/tools'
+import AddSectionButton from './AddSectionButton.vue'
+import EditSectionButton from './EditSectionButton.vue'
 import PageHeader from '@@/PageHeader.vue'
 
+const { params } = useRoute()
+const pid = String(params.pid)
 const list = ref<DictsItemProps[]>([])
-
+const project = ref<DictsItemProps>()
 const getData = async () => {
-  const res = await getDicts({ pid: 0, pageSize: -1 })
+  const res = await getDicts({ pid, pageSize: -1 })
   list.value = res.list
+  project.value = await getDict(pid)
 }
-
-const timeFormat = (item: DictsItemProps) => dayjs(item.time).format('YYYY-MM-DD HH:mm:ss')
-
 onMounted(async () => {
   await getData()
 })
+
+watch(() => pid, async () => await getData())
 
 const deleteItem = async (id: string | number) => {
   const status = await deleteDict(id)

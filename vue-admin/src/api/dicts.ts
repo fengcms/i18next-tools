@@ -65,3 +65,21 @@ export const deleteDict = async (id: string | number): Promise<boolean> => {
   }
   return false
 }
+
+export interface DictsSectionItemProps extends DictsItemProps {
+  children?: DictsSectionItemProps[]
+}
+
+export interface DictSectionProps {
+  project: DictsItemProps
+  section: DictsItemProps
+  dicts: DictsSectionItemProps[]
+}
+
+export const getDictSection = async (pid: string | number, sid: string | number): Promise<DictSectionProps> => {
+  return request({
+    url: `dict_section`,
+    method: 'get',
+    params: { pid, sid }
+  })
+}
