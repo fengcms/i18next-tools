@@ -1,7 +1,31 @@
 <template>
-  <PageHeader :pid="pid" :sid="sid" :mark="section?.mark" :p-key="project?.key" :s-key="section?.key" />
+  <PageHeader
+    :pid="pid"
+    :sid="sid"
+    :mark="section?.mark"
+    :p-key="project?.key"
+    :s-key="section?.key"
+  >
+    当前编辑语言：
+    <el-select v-model="currLang" placeholder="Select" size="large">
+      <el-option
+        v-for="item in langOption"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+  </PageHeader>
   <div class="web-section-main">
-    <DictItem v-for="(item, index) in dicts" :key="index" :item-data="item" :getData="getData" />
+    <DictItem :currLang="currLang" section :item-data="section" :getData="getData" />
+
+    <DictItem
+      v-for="(item, index) in dicts"
+      :key="index"
+      :currLang="currLang"
+      :item-data="item"
+      :getData="getData"
+    />
   </div>
 </template>
 
@@ -13,6 +37,7 @@ import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
 import PageHeader from '@@/PageHeader.vue'
 
 import DictItem from './DictItem.vue'
+import DictToolBar from './DictToolBar.vue'
 
 const { params } = useRoute()
 const pid = String(params.pid)
@@ -36,4 +61,17 @@ watch(
   () => `${pid}-${sid}`,
   async () => await getData()
 )
+
+const currLang = ref('all')
+console.log(currLang.value)
+const langOption = [
+  { label: '全部', value: 'all' },
+  { label: '英语', value: 'en' },
+  { label: '中文', value: 'zh' },
+  { label: '日本语', value: 'ja' },
+  { label: '法语', value: 'fr' },
+  { label: '韩语', value: 'ko' },
+  { label: '西班牙语', value: 'es' },
+  { label: '土耳其语', value: 'tr' }
+]
 </script>

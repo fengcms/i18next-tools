@@ -8,21 +8,19 @@ module.exports = async (ctx, { params }) => {
   if (!pid || !sid) ctx.throw(400, '入参错误')
 
   // 从栏目表拿出所有的栏目数据
-  const { list } = await getList('Dicts', { pagesize: -1, sort: '-id' })
-
+  const { list } = await getList('Dicts', { pagesize: -1, sort: '-node,-id' })
+  console.log(list)
   const project = list.find((item) => item.id === Number(pid))
   const section = list.find((item) => item.id === Number(sid))
   // console.log(project, section)
 
   // 递归函数
-  const makeTree = (pid, arr) => {
+  const makeTree = (pid, arr, labelPre) => {
     const res = []
     for (const i of arr) {
-      // console.log(i.pid)
-      // 直接构型成 element 等 vue 框架的默认数据格式，避免前端需要转化
-      // const obj = { value: i.id, label: i.name }
       if (i.pid === Number(pid)) {
-        const child = makeTree(i.id, arr)
+        i.label = labelPre + '.' + i.key
+        const child = makeTree(i.id, arr, i.label)
         if (child.length) i.children = child
         res.push(i)
       }
@@ -30,6 +28,6 @@ module.exports = async (ctx, { params }) => {
     return res
   }
   // 得到结果并返回
-  const dicts = makeTree(sid, list)
+  const dicts = makeTree(sid, list, section.key)
   ctx.body = succ({ project, section, dicts })
 }

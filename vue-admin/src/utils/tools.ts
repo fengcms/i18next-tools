@@ -31,7 +31,6 @@ export const filterNull = (o: any): any => {
 }
 
 export const timeFormat = (time: string | number | Date, template?: string) => {
-  console.log(time)
   return dayjs(time).format(template ?? 'YYYY-MM-DD HH:mm:ss')
 }
 /*

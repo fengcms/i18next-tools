@@ -2,35 +2,53 @@
   <div class="web-dict-item">
     <template v-if="dict?.node === 1">
       <div class="web-dict-item-node">
-        <strong>{{ dict?.key }}</strong>
-        <p>{{ dict?.mark }}</p>
+        <main>
+          <el-icon><PriceTag /></el-icon>
+          <strong>{{ props?.section ? dict.key : dict?.label }}</strong>
+          <p>{{ dict?.mark }}</p>
+        </main>
+        <DictToolBar :item-data="dict" :currLang="props.currLang" :get-data="props.getData" />
       </div>
-      <DictItem v-for="(item, index) in dict.children" :key="index" :item-data="item" :get-data="props.getData" />
+      <DictItem
+        v-for="(item, index) in dict.children"
+        :currLang="props.currLang"
+        :key="index"
+        :item-data="item"
+        :get-data="props.getData"
+      />
+      <div class="web-dict-item-empty" v-if="!dict.children && !props?.section">
+        <el-icon><Warning /></el-icon> <em>暂无子节点或子翻译条目</em>
+      </div>
     </template>
-    <ul class="web-dict-item-edit" v-else>
-      <li>
-        <strong>{{ dict.key }}</strong>
-      </li>
-      <li>{{ dict.en }}</li>
-      <li>{{ dict.zh }}</li>
-      <li>{{ dict.ja }}</li>
-      <li>{{ dict.fr }}</li>
-      <li>{{ dict.ko }}</li>
-      <li>{{ dict.es }}</li>
-      <li>{{ dict.tr }}</li>
-      <li>
-        <time>{{ dict.time }}</time>
-      </li>
-      <li><button @click="() => props.getData()">sss</button></li>
-    </ul>
+    <EditItem v-else :item-data="dict" :currLang="props.currLang" :get-data="props.getData" />
   </div>
 </template>
 <script setup lang="ts" name="DictItem">
-import { onMounted, ref, watch } from 'vue'
-import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
+import { ref, watch } from 'vue'
+import { PriceTag, Warning } from '@element-plus/icons-vue'
+import type { DictsSectionItemProps } from '@/api/dicts'
+
+import EditItem from './EditItem.vue'
+import DictToolBar from './DictToolBar.vue'
+
 const props = defineProps<{
   itemData: DictsSectionItemProps
   getData: () => void
+  currLang: string
+  section?: boolean
 }>()
+const currLang = ref('all')
+watch(
+  () => props.currLang,
+  (val) => {
+    currLang.value = val
+  }
+)
 const dict = ref(props.itemData)
+watch(
+  () => props.itemData,
+  (val) => {
+    dict.value = val
+  }
+)
 </script>

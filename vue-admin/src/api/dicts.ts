@@ -68,6 +68,7 @@ export const deleteDict = async (id: string | number): Promise<boolean> => {
 
 export interface DictsSectionItemProps extends DictsItemProps {
   children?: DictsSectionItemProps[]
+  label?: string
 }
 
 export interface DictSectionProps {
