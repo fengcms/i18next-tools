@@ -6,7 +6,7 @@
       >
       <template v-else>
         <el-icon><PriceTag /></el-icon>
-        <strong>{{ dict.label }}</strong>
+        <strong>{{ dict.label ?? dict.key }}</strong>
         <el-icon @click="isEditKey = true"><Edit /></el-icon>
       </template>
     </li>
@@ -84,7 +84,6 @@ watch(
 )
 onMounted(() => {
   currLang.value = props.currLang
-  dict.value = props.itemData
 })
 const onSubmit = async () => {
   if (JSON.stringify(props.itemData) !== JSON.stringify(dict.value)) {
