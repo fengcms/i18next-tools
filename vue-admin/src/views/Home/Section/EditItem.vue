@@ -134,6 +134,7 @@ const deleteItem = async () => {
 }
 
 const copyLabel = async (label: string) => {
-  await copyText(`$t('${label}')`)
+  await copyText(`t('${label}')`)
+  ElMessage.success(`t('${label}') 已经复制到剪切板`)
 }
 </script>

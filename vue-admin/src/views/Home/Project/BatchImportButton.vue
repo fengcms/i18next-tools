@@ -1,12 +1,7 @@
 <template>
   <el-button @click="showDialog = true">项目文件批量导入</el-button>
   <el-dialog v-model="showDialog" title="项目文件批量导入" width="800px">
-    <el-alert
-      title="非前端开发人员请勿操作！请在下方文本框内粘贴无错误的翻译文件源码，支持 js 或 json 格式。"
-      type="warning"
-      show-icon
-      :closable="false"
-    />
+    <el-alert title="非前端开发人员请勿操作！" type="warning" show-icon :closable="false" />
     <br />
     <el-space>
       选择导入的语言：
@@ -20,8 +15,13 @@
       </el-select>
       仅支持中文或者英文的导入文件，不要选错哦！
     </el-space>
-    <br /><br />
-    <el-input type="textarea" :rows="8" v-model="inputText"></el-input>
+    <br />
+    <el-input
+      type="textarea"
+      :rows="8"
+      v-model="inputText"
+      placeholder="请在文本框内粘贴无错误的翻译文件源码，支持 js 或 json 格式。"
+    ></el-input>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="showDialog = false">Cancel</el-button>
@@ -41,19 +41,7 @@ const props = defineProps<{
 }>()
 
 const showDialog = ref(false)
-const inputText = ref(`export default {
-  section: 'Header',
-  dicts: {
-    Nav: {
-      Trade: 'Trade'
-    },
-    Tool: {
-      CopyAddress: 'Copy Address',
-      ViewInExplorer: 'View in Explorer'
-    }
-  }
-}
-`)
+const inputText = ref('')
 const currLang = ref('en')
 const langOption = [
   { label: '英语', value: 'en' },

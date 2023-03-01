@@ -16,8 +16,8 @@
         />
       </div>
       <DictItem
-        v-for="(item, index) in dict.children"
         v-show="isShowChild"
+        v-for="(item, index) in dict.children"
         :currLang="props.currLang"
         :key="index"
         :item-data="item"
