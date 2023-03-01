@@ -17,6 +17,7 @@
         />
       </el-select>
       <ExportJsonButton :currLang="currLang" :section="section" :dicts="dicts" />
+      <BatchImportSingleLangButton :section="section" :dicts="dicts" :getData="getData" />
     </el-space>
   </PageHeader>
   <div class="web-section-main">
@@ -74,6 +75,7 @@ import PageHeader from '@@/PageHeader.vue'
 
 import DictItem from './DictItem.vue'
 import ExportJsonButton from './ExportJsonButton.vue'
+import BatchImportSingleLangButton from './BatchImportSingleLangButton.vue'
 
 const { params } = useRoute()
 const pid = String(params.pid)

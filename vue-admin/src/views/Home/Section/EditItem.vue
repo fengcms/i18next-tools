@@ -109,6 +109,7 @@ onMounted(() => {
 
 const isEdit = computed(() => JSON.stringify(props.itemData) !== JSON.stringify(dict.value))
 const onSubmit = async () => {
+  if (isEditKey.value) isEditKey.value = false
   if (isEdit.value) {
     const { count } = await getDicts({
       pid: dict.value.pid,
@@ -119,7 +120,7 @@ const onSubmit = async () => {
     if (count === 0) {
       await editDict(dict.value.id, { ...dict.value, time: +new Date() })
       await props.getData()
-      if (isEditKey.value) isEditKey.value = false
+
       ElMessage.success('编辑成功')
     } else {
       ElMessage.error('同一节点下，Key 值不能重复，请检查一下哦！')

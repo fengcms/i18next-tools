@@ -1,6 +1,6 @@
 <template>
-  <el-button @click="showDialog = true">项目文件批量导入</el-button>
-  <el-dialog v-model="showDialog" title="项目文件批量导入" width="800px">
+  <el-button @click="showDialog = true">批量导入单语言</el-button>
+  <el-dialog v-model="showDialog" title="批量导入单语言" width="800px">
     <el-alert title="非前端开发人员请勿操作！" type="warning" show-icon :closable="false" />
     <br />
     <el-space>
@@ -16,6 +16,7 @@
       仅支持中文或者英文的导入文件，不要选错哦！
     </el-space>
     <br /><br />
+
     <el-input
       type="textarea"
       :rows="8"
@@ -33,43 +34,63 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { addDict, getDicts } from '@/api/dicts'
+import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
+import { editDict } from '@/api/dicts'
 import { toType, sleep } from '@/utils/tools'
 const props = defineProps<{
+  section: DictsItemProps
+  dicts: DictsSectionItemProps[]
   getData: () => void
-  pid: string | number
 }>()
-
 const showDialog = ref(false)
 const inputText = ref('')
 const currLang = ref('en')
 const langOption = [
   { label: '英语', value: 'en' },
-  { label: '中文', value: 'zh' }
+  { label: '中文', value: 'zh' },
+  { label: '日本语', value: 'ja' },
+  { label: '法语', value: 'fr' },
+  { label: '韩语', value: 'ko' },
+  { label: '西班牙语', value: 'es' },
+  { label: '土耳其语', value: 'tr' }
 ]
 
-const upData = async (o: any, node: boolean) => {
-  const { ids } = await addDict(o)
-  ElMessage.success(`${node ? '节点' : '条目'} ${o.key} 添加成功， id 为 ${ids[0]}`)
-  await sleep(500)
-  return ids[0]
-}
-
-const addDictFunc = async (obj: Record<string, any>, pid: string | number) => {
+const addDictFunc = async (obj: Record<string, any>, sourceDicts: Record<string, any>) => {
   const arr = Object.keys(obj)
   for (const i of arr) {
     const t = toType(obj[i])
-    if (t === 'object') {
-      const o = { key: i, pid, mark: `${i}为批量导入，备注未填写`, node: 1 }
-      const id = await upData(o, true)
-      await addDictFunc(obj[i], id)
+    if (sourceDicts[i]) {
+      if (t === 'object') {
+        await addDictFunc(obj[i], sourceDicts[i].child)
+      } else {
+        const o = {}
+        // @ts-ignore
+        o[currLang.value] = obj[i]
+        const id = sourceDicts[i].id
+        await editDict(id, o)
+        ElMessage.success(`ID 为 ${id} 的条目更新语言字段成功！`)
+        await sleep(500)
+      }
     } else {
-      const o = { key: i, pid, node: 0 }
-      // @ts-ignore
-      o[currLang.value] = obj[i]
-      await upData(o, false)
+      ElMessage.error(
+        `Key 值为 ${i}, 翻译为 ${obj[i]} 的条目在表格中没有哦！请在导入完成后，再检查一下！`
+      )
     }
   }
+}
+
+const formatDicts = (arr: DictsSectionItemProps[]) => {
+  const o = {}
+  for (const i of arr) {
+    if (i.node === 1) {
+      // @ts-ignore
+      o[i.key] = { child: i.children ? formatDicts(i.children) : {}, id: i.id }
+    } else {
+      // @ts-ignore
+      o[i.key] = { value: i[props.currLang], id: i.id }
+    }
+  }
+  return o
 }
 
 const onSubmit = async () => {
@@ -84,20 +105,21 @@ const onSubmit = async () => {
       ElMessage.error('代码缺少 dicts 字段，该字段为该段落字典详情')
       return
     }
-    const { count } = await getDicts({ pid: props.pid, key: obj.section })
-    if (count !== 0) {
+    if (obj.section !== props.section.key) {
       ElMessage.error(
-        `该项目下，已经有 ${obj.section} 段落，请不要重复导入，如果需要重新导入，请先删除原有段落后再执行导入操作。`
+        `导入段落名称为 ${obj.section}，和本页面编辑段落名称 ${props.section.key} 不一致，是不是搞错了啊！`
       )
       return
     }
-    const pid = await upData({ key: obj.section, pid: props.pid, node: 1 }, true)
-    await addDictFunc(obj.dicts, pid)
+    const sourceDicts = formatDicts(props.dicts)
+    await addDictFunc(obj.dicts, sourceDicts)
     ElMessage.success('所有内容已批量导入完毕，检查一下你的工作成果吧！')
     await props.getData()
     showDialog.value = false
-    // console.log(JSON.stringify(obj))
+    inputText.value = ''
+    currLang.value = 'en'
   } catch (e) {
+    console.log(e)
     ElMessage.error('输入的代码不符合标准，请仔细检查')
   }
 }
