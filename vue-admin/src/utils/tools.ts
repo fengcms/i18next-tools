@@ -15,7 +15,7 @@ export const filterNull = (o: any): any => {
     if (o[key] == null) delete o[key]
     if (toType(o[key]) === 'string') {
       o[key] = o[key].trim()
-      if (o[key] === '') delete o[key]
+      // if (o[key] === '') delete o[key]
     } else if (toType(o[key]) === 'object') {
       o[key] = filterNull(o[key])
       if (JSON.stringify(o[key]) === '{}') delete o[key]
@@ -28,6 +28,22 @@ export const filterNull = (o: any): any => {
     }
   }
   return o
+}
+
+export const copyText = (text: string) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const input = document.createElement('textarea')
+      input.value = text
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('copy')
+      input?.parentElement?.removeChild(input)
+      resolve(text)
+    } catch (e) {
+      reject(e)
+    }
+  })
 }
 
 export const timeFormat = (time: string | number | Date, template?: string) => {
@@ -147,7 +163,7 @@ export const HTMLDecode = (text: string) => {
   })
 }
 // JSON 数据转 Url search 参数字符串
-export const obj2Url = (obj:Record<string, string>) => {
+export const obj2Url = (obj: Record<string, string>) => {
   obj = filterNull(obj)
   return Object.keys(obj)
     .map((i) => `${i}=${obj[i]}`)

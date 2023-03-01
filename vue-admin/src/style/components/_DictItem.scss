@@ -12,23 +12,23 @@
     align-items: center;
     padding: 0 10px;
     background: $cff;
-    i {
-      color: $orange;
-    }
-    strong {
-      display: block;
-      padding: 0 10px;
-      font-size: 15px;
-      color: $orange;
-    }
-    p {
-      color: $c88;
-      font-size: 12px;
-    }
 
     main {
       display: flex;
       align-items: center;
+      i {
+        color: $orange;
+      }
+      strong {
+        display: block;
+        padding: 0 10px;
+        font-size: 15px;
+        color: $orange;
+      }
+      p {
+        color: $c88;
+        font-size: 12px;
+      }
     }
   }
   &-edit {
@@ -46,7 +46,7 @@
       flex: 1;
       &:first-child {
         min-width: 300px;
-        i {
+        & > .el-icon {
           color: $blue;
         }
         strong {

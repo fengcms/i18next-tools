@@ -1,9 +1,14 @@
 <template>
   <ul class="web-dict-item-edit">
     <li>
-      <el-input v-model="dict.key" placeholder="键值"
+      <el-input v-if="isEditKey" v-model="dict.key" placeholder="键值"
         ><template #prepend>{{ keyPre }}</template></el-input
       >
+      <template v-else>
+        <el-icon><PriceTag /></el-icon>
+        <strong>{{ dict.label }}</strong>
+        <el-icon @click="isEditKey = true"><Edit /></el-icon>
+      </template>
     </li>
 
     <li>
@@ -45,10 +50,10 @@
   </ul>
 </template>
 <script setup lang="ts" name="DictItem">
-import { onMounted, ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Delete } from '@element-plus/icons-vue'
-import { editDict, deleteDict } from '@/api/dicts'
+import { PriceTag, Delete, Edit } from '@element-plus/icons-vue'
+import { editDict, deleteDict, getDicts } from '@/api/dicts'
 import type { DictsSectionItemProps } from '@/api/dicts'
 import { timeFormat } from '@/utils/tools'
 const props = defineProps<{
@@ -57,13 +62,15 @@ const props = defineProps<{
   currLang: string
 }>()
 const currLang = ref('all')
+const dict = ref({ ...props.itemData })
+const isEditKey = ref(false)
 watch(
   () => props.currLang,
   (val) => {
     currLang.value = val
   }
 )
-const dict = ref({ ...props.itemData })
+
 const keyPre = computed(() => {
   const temp = (dict.value?.label || '').split('.')
   delete temp[temp.length - 1]
@@ -75,18 +82,26 @@ watch(
     dict.value = { ...val }
   }
 )
+onMounted(() => {
+  currLang.value = props.currLang
+  dict.value = props.itemData
+})
 const onSubmit = async () => {
-  console.log(
-    dict.value.en,
-    props.itemData.en,
-    JSON.stringify(props.itemData) !== JSON.stringify(dict.value)
-  )
-
   if (JSON.stringify(props.itemData) !== JSON.stringify(dict.value)) {
-    console.log(111)
-    await editDict(dict.value.id, { ...dict.value, time: +new Date() })
-    await props.getData()
-    ElMessage.success('编辑成功')
+    const { count } = await getDicts({
+      pid: dict.value.pid,
+      'id-neq': dict.value.id,
+      key: dict.value.key,
+      pageSize: -1
+    })
+    if (count === 0) {
+      await editDict(dict.value.id, { ...dict.value, time: +new Date() })
+      await props.getData()
+      if (isEditKey.value) isEditKey.value = false
+      ElMessage.success('编辑成功')
+    } else {
+      ElMessage.error('同一节点下，Key 值不能重复，请检查一下哦！')
+    }
   }
 }
 const deleteItem = async () => {

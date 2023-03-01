@@ -6,15 +6,18 @@
     :p-key="project?.key"
     :s-key="section?.key"
   >
-    当前编辑语言：
-    <el-select v-model="currLang" placeholder="Select" size="large">
-      <el-option
-        v-for="item in langOption"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
+    <el-space>
+      当前编辑语言：
+      <el-select v-model="currLang" placeholder="Select">
+        <el-option
+          v-for="item in langOption"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      <ExportJsonButton :currLang="currLang" :section="section" :dicts="dicts" />
+    </el-space>
   </PageHeader>
   <div class="web-section-main">
     <DictItem :currLang="currLang" section :item-data="section" :getData="getData" />
@@ -37,7 +40,7 @@ import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
 import PageHeader from '@@/PageHeader.vue'
 
 import DictItem from './DictItem.vue'
-import DictToolBar from './DictToolBar.vue'
+import ExportJsonButton from './ExportJsonButton.vue'
 
 const { params } = useRoute()
 const pid = String(params.pid)
@@ -63,7 +66,7 @@ watch(
 )
 
 const currLang = ref('all')
-console.log(currLang.value)
+// console.log(currLang.value)
 const langOption = [
   { label: '全部', value: 'all' },
   { label: '英语', value: 'en' },

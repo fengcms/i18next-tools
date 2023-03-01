@@ -10,7 +10,7 @@ const service = axios.create({
 
 // request interceptor
 service.interceptors.request.use(
-  config => {
+  (config) => {
     // do something before request is sent
     const token = getToken()
     if (token) {
@@ -20,7 +20,7 @@ service.interceptors.request.use(
     config.params = filterNull(config.params)
     return config
   },
-  error => {
+  (error) => {
     // do something with request error
     console.log(error) // for debug
     return Promise.reject(error)
@@ -29,7 +29,7 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  response => {
+  (response) => {
     const res = response.data
     if (response.status !== 200 || res.status !== 0) {
       ElMessage({
@@ -42,7 +42,7 @@ service.interceptors.response.use(
       return Promise.resolve(res.data)
     }
   },
-  error => {
+  (error) => {
     console.log('err ' + error)
     const { response } = error
     const { data, status } = response
@@ -53,7 +53,7 @@ service.interceptors.response.use(
         type: 'warning'
       }).then(() => {
         removeToken()
-        window.location.href  = '/login'
+        window.location.href = '/login'
       })
     } else {
       ElMessage({

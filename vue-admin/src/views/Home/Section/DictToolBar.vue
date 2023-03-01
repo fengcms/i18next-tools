@@ -1,6 +1,7 @@
 <template>
   <el-dialog
     v-model="showAddNode"
+    width="500px"
     :title="`添加 ${props.itemData?.label || props.itemData?.key} 子节点`"
   >
     <el-form label-position="top">
@@ -25,6 +26,7 @@
 
   <el-dialog
     v-model="showAddItem"
+    width="500px"
     :title="`添加 ${props.itemData?.label || props.itemData?.key} 子翻译条目`"
   >
     <el-form label-position="top">
@@ -48,19 +50,31 @@
   </el-dialog>
 
   <div class="web-dict-item-bar">
-    <el-button size="small" type="success" @click="showAddNode = true">Add 子节点</el-button>
-    <el-button size="small" type="success" @click="showAddItem = true">Add 子条目</el-button>
+    <EditNode :get-data="props.getData" :id="props.itemData?.id" />
+    <el-button type="danger" size="small" :icon="Delete" @click="deleteNode()" />
+    <el-button size="small" type="success" :icon="Plus" @click="showAddNode = true"
+      >子节点</el-button
+    >
+    <el-button size="small" type="success" :icon="Plus" @click="showAddItem = true"
+      >子条目</el-button
+    >
+
+    <el-button size="small" :icon="isShowChild ? ArrowUp : ArrowDown" @click="toggleShowChild()" />
   </div>
 </template>
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { addDict } from '@/api/dicts'
+import { addDict, getDicts, deleteDict } from '@/api/dicts'
 import type { DictsSectionItemProps } from '@/api/dicts'
-import { Plus } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Delete, Plus, ArrowUp, ArrowDown } from '@element-plus/icons-vue'
+import EditNode from './EditNode.vue'
 const props = defineProps<{
   itemData: DictsSectionItemProps
   getData: () => void
+  toggleShowChild: () => void
   currLang: string
+  isShowChild: boolean
 }>()
 const currLang = ref('all')
 watch(
@@ -74,16 +88,45 @@ const showAddNode = ref(false)
 const nodeData = ref({ key: '', mark: '', pid: props.itemData?.id, node: 1 })
 
 const onSubmitNode = async () => {
-  await addDict(nodeData.value)
-  await props.getData()
-  showAddNode.value = false
+  const { count } = await getDicts({
+    pid: props.itemData?.id,
+    key: nodeData.value.key,
+    pageSize: -1
+  })
+  if (count === 0) {
+    await addDict(nodeData.value)
+    await props.getData()
+    showAddNode.value = false
+  } else {
+    ElMessage.error('同一节点下，Key 值不能重复，请检查一下哦！')
+  }
 }
 const showAddItem = ref(false)
 const itemData = ref({ key: '', zh: '', en: '', pid: props.itemData?.id, node: 0 })
 
 const onSubmitItem = async () => {
-  await addDict(itemData.value)
-  await props.getData()
-  showAddItem.value = false
+  const { count } = await getDicts({
+    pid: props.itemData?.id,
+    key: itemData.value.key,
+    pageSize: -1
+  })
+  if (count === 0) {
+    await addDict(itemData.value)
+    await props.getData()
+    showAddItem.value = false
+  } else {
+    ElMessage.error('同一节点下，Key 值不能重复，请检查一下哦！')
+  }
+}
+
+const deleteNode = async () => {
+  await ElMessageBox.confirm(`确认删除 ${props.itemData?.label} 的条目吗？`, '⚠️ 警告')
+  const status = await deleteDict(props.itemData?.id)
+  if (status) {
+    await props.getData()
+    ElMessage.success('删除成功')
+  } else {
+    ElMessage.error('有子数据，请先删除子数据，再删除本数据')
+  }
 }
 </script>
