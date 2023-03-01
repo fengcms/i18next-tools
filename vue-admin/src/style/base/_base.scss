@@ -1,5 +1,6 @@
 // base by fungleo
-html {}
+html {
+}
 body {
   line-height: 1;
   font-family: 'gilroy', 'PingFang SC', 'Heiti SC', 'Droidsansfallback', Helvetica, 'Droid Sans';
@@ -10,7 +11,6 @@ body {
     position: static !important;
   }
 }
-
 
 // html,body {overflow: hidden;}
 .block {
@@ -59,30 +59,35 @@ body {
 }
 
 .web {
-  width: 1200px;margin-left: auto;margin-right: auto;
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
   &_ {
-    min-width: 1200px;margin-left: auto;margin-right: auto;width: 100%;
+    min-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
   }
 }
 // 滚动条
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  background: $bg;
-
-  // background: #000;
-}
-::-webkit-scrollbar-thumb {
-  background: $dark1;
-  border-radius: 5px;
-  // border: 2px solid rgba($dark2, .5);
-}
-::-webkit-scrollbar-track-piece {
-  background: $bg;
-}
-::-webkit-scrollbar-corner {
-  background: $bg;
-}
+//::-webkit-scrollbar {
+//  width: 8px;
+//  height: 8px;
+//  background: $bg;
+//
+//  // background: #000;
+//}
+//::-webkit-scrollbar-thumb {
+//  background: $dark1;
+//  border-radius: 5px;
+//  // border: 2px solid rgba($dark2, .5);
+//}
+//::-webkit-scrollbar-track-piece {
+//  background: $bg;
+//}
+//::-webkit-scrollbar-corner {
+//  background: $bg;
+//}
 // html,
 // body {
 //   * {
@@ -98,10 +103,12 @@ body {
 .mobile-mode {
   body {
     font-size: rem(16);
-    padding-top: constant(safe-area-inset-top); //为导航栏+状态栏的高度 88px
-    padding-left: constant(safe-area-inset-left); //如果未竖屏时为0
-    padding-right: constant(safe-area-inset-right); //如果未竖屏时为0
-    padding-bottom: constant(safe-area-inset-bottom); //为底下圆弧的高度 34px
+    //为导航栏+状态栏的高度 88px
+    //如果未竖屏时为0
+    //如果未竖屏时为0
+    //为底下圆弧的高度 34px
+    padding: constant(safe-area-inset-top) constant(safe-area-inset-right)
+      constant(safe-area-inset-bottom) constant(safe-area-inset-left);
     font-weight: normal;
   }
   &::-webkit-scrollbar,

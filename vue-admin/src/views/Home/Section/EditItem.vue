@@ -1,47 +1,68 @@
 <template>
   <ul class="web-dict-item-edit">
     <li>
-      <el-input v-if="isEditKey" v-model="dict.key" placeholder="键值"
-        ><template #prepend>{{ keyPre }}</template></el-input
-      >
-      <template v-else>
-        <el-icon><PriceTag /></el-icon>
-        <strong>{{ dict.label ?? dict.key }}</strong>
-        <el-icon @click="isEditKey = true"><Edit /></el-icon>
-      </template>
+      <div class="web-dict-item-edit-key" :class="{ edit: isEditKey }">
+        <template v-if="isEditKey">
+          <el-input v-model="dict.key" placeholder="键值"
+            ><template #prepend>{{ keyPre }}</template></el-input
+          >
+          <el-button @click="onSubmit()" type="primary" :icon="Check" />
+        </template>
+        <template v-else>
+          <el-icon><PriceTag /></el-icon>
+          <strong @dblclick="copyLabel(dict.label ?? dict.key)">{{
+            dict.label ?? dict.key
+          }}</strong>
+          <el-icon @click="isEditKey = true"><Edit /></el-icon>
+        </template>
+      </div>
     </li>
 
     <li>
-      <el-input
-        :disabled="!['zh', 'all'].includes(currLang)"
-        v-model="dict.zh"
-        placeholder="中文"
-      />
+      <el-tooltip effect="dark" :content="dict.zh" placement="right" :disabled="!Boolean(dict.zh)">
+        <el-input
+          :disabled="!['zh', 'all'].includes(currLang)"
+          v-model="dict.zh"
+          placeholder="中文"
+      /></el-tooltip>
     </li>
     <li>
-      <el-input
-        :disabled="!['en', 'all'].includes(currLang)"
-        v-model="dict.en"
-        placeholder="英语"
-      />
+      <el-tooltip effect="dark" :content="dict.en" placement="right" :disabled="!Boolean(dict.en)">
+        <el-input
+          :disabled="!['en', 'all'].includes(currLang)"
+          v-model="dict.en"
+          placeholder="英语"
+      /></el-tooltip>
     </li>
     <li v-show="['ja', 'all'].includes(currLang)">
-      <el-input v-model="dict.ja" placeholder="日本语" />
+      <el-tooltip effect="dark" :content="dict.ja" placement="right" :disabled="!Boolean(dict.ja)">
+        <el-input v-model="dict.ja" placeholder="日本语" />
+      </el-tooltip>
     </li>
     <li v-show="['fr', 'all'].includes(currLang)">
-      <el-input v-model="dict.fr" placeholder="法语" />
+      <el-tooltip effect="dark" :content="dict.fr" placement="right" :disabled="!Boolean(dict.fr)">
+        <el-input v-model="dict.fr" placeholder="法语"
+      /></el-tooltip>
     </li>
     <li v-show="['ko', 'all'].includes(currLang)">
-      <el-input v-model="dict.ko" placeholder="韩语" />
+      <el-tooltip effect="dark" :content="dict.ko" placement="right" :disabled="!Boolean(dict.ko)">
+        <el-input v-model="dict.ko" placeholder="韩语"
+      /></el-tooltip>
     </li>
     <li v-show="['es', 'all'].includes(currLang)">
-      <el-input v-model="dict.es" placeholder="西班牙语" />
+      <el-tooltip effect="dark" :content="dict.es" placement="right" :disabled="!Boolean(dict.es)">
+        <el-input v-model="dict.es" placeholder="西班牙语"
+      /></el-tooltip>
     </li>
     <li v-show="['tr', 'all'].includes(currLang)">
-      <el-input v-model="dict.tr" placeholder="土耳其语" />
+      <el-tooltip effect="dark" :content="dict.tr" placement="right" :disabled="!Boolean(dict.tr)">
+        <el-input v-model="dict.tr" placeholder="土耳其语"
+      /></el-tooltip>
     </li>
     <li>
-      <el-button type="primary" size="small" @click="onSubmit()">保存</el-button>
+      <el-button type="primary" size="small" :disabled="!isEdit" @click="onSubmit()"
+        >保存</el-button
+      >
       <el-button type="danger" size="small" :icon="Delete" @click="deleteItem()"></el-button>
     </li>
     <li>
@@ -52,10 +73,10 @@
 <script setup lang="ts" name="DictItem">
 import { ref, watch, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { PriceTag, Delete, Edit } from '@element-plus/icons-vue'
+import { PriceTag, Delete, Edit, Check } from '@element-plus/icons-vue'
 import { editDict, deleteDict, getDicts } from '@/api/dicts'
 import type { DictsSectionItemProps } from '@/api/dicts'
-import { timeFormat } from '@/utils/tools'
+import { timeFormat, copyText } from '@/utils/tools'
 const props = defineProps<{
   itemData: DictsSectionItemProps
   getData: () => void
@@ -85,8 +106,10 @@ watch(
 onMounted(() => {
   currLang.value = props.currLang
 })
+
+const isEdit = computed(() => JSON.stringify(props.itemData) !== JSON.stringify(dict.value))
 const onSubmit = async () => {
-  if (JSON.stringify(props.itemData) !== JSON.stringify(dict.value)) {
+  if (isEdit.value) {
     const { count } = await getDicts({
       pid: dict.value.pid,
       'id-neq': dict.value.id,
@@ -108,5 +131,9 @@ const deleteItem = async () => {
   await deleteDict(dict.value.id)
   await props.getData()
   ElMessage.success('删除成功')
+}
+
+const copyLabel = async (label: string) => {
+  await copyText(`$t('${label}')`)
 }
 </script>

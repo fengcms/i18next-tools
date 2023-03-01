@@ -49,6 +49,10 @@ export const copyText = (text: string) => {
 export const timeFormat = (time: string | number | Date, template?: string) => {
   return dayjs(time).format(template ?? 'YYYY-MM-DD HH:mm:ss')
 }
+
+export const sleep = async (time: number): Promise<any> => {
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
 /*
   多选框 全选 反选 不选 工具方法，支持单层和双层数据处理
   参数说明：

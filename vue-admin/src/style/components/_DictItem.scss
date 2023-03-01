@@ -46,14 +46,8 @@
       flex: 1;
       &:first-child {
         min-width: 300px;
-        & > .el-icon {
-          color: $blue;
-        }
-        strong {
-          display: block;
-          padding: 0 10px;
-          color: $blue;
-        }
+        padding: 0;
+        position: relative;
       }
       &:not(:last-child) {
         border-right: 1px solid $cdd;
@@ -62,6 +56,38 @@
         max-width: 120px;
         color: $c88;
         justify-content: center;
+      }
+    }
+    &-key {
+      width: 100%;
+      min-width: 300px;
+      overflow: hidden;
+      height: 40px;
+      padding: 0 5px;
+      background: $cf8;
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 0 0 1px $cdd;
+      & > .el-icon {
+        color: $blue;
+        cursor: pointer;
+      }
+      strong {
+        display: block;
+        padding: 0 10px;
+        color: $blue;
+        cursor: pointer;
+      }
+      &:hover {
+        width: auto;
+      }
+      &.edit {
+        width: 500px;
+        .el-button {
+          margin-left: 10px;
+        }
       }
     }
   }

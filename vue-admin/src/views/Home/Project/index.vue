@@ -1,6 +1,7 @@
 <template>
   <PageHeader :pid="pid" :mark="project?.mark" :p-key="project?.key">
     <AddSectionButton :getData="getData" :pid="pid" />
+    <BatchImportButton :getData="getData" :pid="pid" />
   </PageHeader>
   <div class="web-project-list">
     <el-table :data="list" style="width: 100%">
@@ -15,7 +16,11 @@
       />
       <el-table-column fixed="right" label="Operations" width="300">
         <template #default="scope">
-          <el-button type="primary" @click="$router.push(`/project/${scope.row.pid}/section/${scope.row.id}`)">详情</el-button>
+          <el-button
+            type="primary"
+            @click="$router.push(`/project/${scope.row.pid}/section/${scope.row.id}`)"
+            >详情</el-button
+          >
           <EditSectionButton :id="scope.row.id" :getData="getData" />
           <el-button @click="deleteItem(scope.row.id)">删除</el-button>
         </template>
@@ -33,6 +38,7 @@ import type { DictsItemProps } from '@/api/dicts'
 import { timeFormat } from '@/utils/tools'
 import AddSectionButton from './AddSectionButton.vue'
 import EditSectionButton from './EditSectionButton.vue'
+import BatchImportButton from './BatchImportButton.vue'
 import PageHeader from '@@/PageHeader.vue'
 
 const { params } = useRoute()
@@ -48,7 +54,10 @@ onMounted(async () => {
   await getData()
 })
 
-watch(() => pid, async () => await getData())
+watch(
+  () => pid,
+  async () => await getData()
+)
 
 const deleteItem = async (id: string | number) => {
   const status = await deleteDict(id)
