@@ -38,7 +38,7 @@ import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
 import { editDict } from '@/api/dicts'
 import { toType, sleep } from '@/utils/tools'
 const props = defineProps<{
-  section: DictsItemProps
+  section?: DictsItemProps
   dicts: DictsSectionItemProps[]
   getData: () => void
 }>()
@@ -105,9 +105,9 @@ const onSubmit = async () => {
       ElMessage.error('代码缺少 dicts 字段，该字段为该段落字典详情')
       return
     }
-    if (obj.section !== props.section.key) {
+    if (obj.section !== props.section?.key) {
       ElMessage.error(
-        `导入段落名称为 ${obj.section}，和本页面编辑段落名称 ${props.section.key} 不一致，是不是搞错了啊！`
+        `导入段落名称为 ${obj.section}，和本页面编辑段落名称 ${props.section?.key} 不一致，是不是搞错了啊！`
       )
       return
     }

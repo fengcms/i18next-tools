@@ -30,7 +30,7 @@ import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
 import { copyText } from '@/utils/tools'
 
 const props = defineProps<{
-  section: DictsItemProps
+  section?: DictsItemProps
   dicts: DictsSectionItemProps[]
   currLang: string
 }>()
@@ -45,7 +45,7 @@ const onExportOpen = () => {
     return
   }
   const resultObj = {
-    section: props.section.key,
+    section: props.section?.key,
     dicts: {}
   }
 

@@ -21,7 +21,23 @@ export interface DictsItemProps {
   tr: string | null
   mark: string | null
   node: number
-  time: string
+  time: number
+}
+
+export const DictsItemDefaultData = {
+  id: 0,
+  pid: 0,
+  key: '',
+  en: null,
+  zh: null,
+  ja: null,
+  fr: null,
+  ko: null,
+  es: null,
+  tr: null,
+  mark: null,
+  node: 0,
+  time: 0
 }
 
 export interface DictsListProps {
@@ -77,7 +93,10 @@ export interface DictSectionProps {
   dicts: DictsSectionItemProps[]
 }
 
-export const getDictSection = async (pid: string | number, sid: string | number): Promise<DictSectionProps> => {
+export const getDictSection = async (
+  pid: string | number,
+  sid: string | number
+): Promise<DictSectionProps> => {
   return request({
     url: `dict_section`,
     method: 'get',

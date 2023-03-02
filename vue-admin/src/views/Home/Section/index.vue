@@ -21,7 +21,12 @@
     </el-space>
   </PageHeader>
   <div class="web-section-main">
-    <DictItem :currLang="currLang" section :item-data="section" :getData="getData" />
+    <DictItem
+      :currLang="currLang"
+      section
+      :item-data="section ?? DictsItemDefaultData"
+      :getData="getData"
+    />
 
     <DictItem
       v-for="(item, index) in dicts"
@@ -69,7 +74,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getDictSection } from '@/api/dicts'
+import { getDictSection, DictsItemDefaultData } from '@/api/dicts'
 import type { DictsItemProps, DictsSectionItemProps } from '@/api/dicts'
 import PageHeader from '@@/PageHeader.vue'
 

@@ -11,7 +11,7 @@
       <el-table-column
         prop="time"
         label="Time"
-        :formatter="(row) => timeFormat(row.time)"
+        :formatter="(row: DictsItemProps) => timeFormat(row.time)"
         width="200"
       />
       <el-table-column fixed="right" label="Operations" width="300">
