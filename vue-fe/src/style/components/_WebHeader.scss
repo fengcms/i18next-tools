@@ -1,0 +1,45 @@
+.web-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $cf7;
+  height: 48px;
+  border-bottom: 1px solid $cdd;
+  padding: 0 12px;
+
+  h1 {
+    font-size: 18px;
+  }
+}
+
+.web-main {
+  padding: 16px;
+}
+
+.login {
+  width: 300px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid $cdd;
+
+  background: $cff;
+  h3 {
+    text-align: center;
+    font-size: 18px;
+    color: $blue;
+    margin-bottom: 20px;
+  }
+
+  &-layout {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $cf7;
+  }
+
+  .el-button {
+    width: 100%;
+  }
+}
