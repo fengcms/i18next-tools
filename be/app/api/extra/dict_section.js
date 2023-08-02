@@ -9,7 +9,7 @@ module.exports = async (ctx, { params }) => {
 
   // 从栏目表拿出所有的栏目数据
   const { list } = await getList('Dicts', { pagesize: -1, sort: '-node,-id' })
-  console.log(list)
+  // console.log(list)
   const project = list.find((item) => item.id === Number(pid))
   const section = list.find((item) => item.id === Number(sid))
   // console.log(project, section)
