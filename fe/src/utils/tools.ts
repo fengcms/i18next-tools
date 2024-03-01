@@ -1,5 +1,6 @@
 import JSEncrypt from 'jsencrypt'
 import dayjs from 'dayjs'
+import forge from 'node-forge'
 
 // 精确校验数据格式方法
 export const toType = (obj: any): string => {
@@ -188,9 +189,8 @@ export const url2Obj = (url = '') => {
 }
 export const rsaEn = (str: string, key: string) => {
   try {
-    const JSE = new JSEncrypt()
-    JSE.setPublicKey(key)
-    return JSE.encrypt(str)
+    const publicK = forge.pki.publicKeyFromPem(key)
+    return publicK.encrypt(str, 'RSA-OAEP')
   } catch (e: any) {
     return new Error(e)
   }
